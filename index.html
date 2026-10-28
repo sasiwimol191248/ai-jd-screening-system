@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI-Powered Job Description & Smart Screening System</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen">
+
+    <!-- Header -->
+    <header class="bg-indigo-900 text-white shadow-md">
+        <div class="max-w-7xl mx-auto px-4 py-4 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div class="flex items-center space-x-3">
+                <div class="bg-indigo-600 p-2 rounded-lg text-xl font-bold">🤖 AI JD & Screening</div>
+                <div>
+                    <h1 class="text-lg font-bold">ระบบสร้าง JD และคัดกรองผู้สมัครอัจฉริยะ</h1>
+                    <p class="text-xs text-indigo-300">แก้ปัญหา Skill-Job Mismatch ป้องกันคนไม่ตรงสายและลดความผิดพลาดในการจ้างงาน</p>
+                </div>
+            </div>
+            <div class="flex gap-2">
+                <button onclick="switchTab('hr')" id="btn-hr" class="px-4 py-2 rounded-lg bg-indigo-700 text-sm font-semibold transition hover:bg-indigo-600">1. ฝั่ง HR (สร้าง JD)</button>
+                <button onclick="switchTab('candidate')" id="btn-candidate" class="px-4 py-2 rounded-lg bg-indigo-950 text-sm font-semibold transition hover:bg-indigo-600">2. ฝั่งผู้สมัคร (ทดสอบคัดกรอง)</button>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-4 py-8">
+
+        <!-- ================= TAB 1: HR SECTION (JD BUILDER) ================= -->
+        <section id="tab-hr" class="space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-bold text-slate-900">📝 สร้างและกำหนดเกณฑ์คัดกรอง (Job Description & Criteria)</h2>
+                    <button onclick="generateAIJD()" class="bg-indigo-50 text-indigo-600 px-4 py-2 rounded-lg text-sm font-semibold hover:bg-indigo-100 transition">✨ ให้ AI ช่วยร่าง JD</button>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อตำแหน่งงาน (Job Title)</label>
+                        <input type="text" id="jd-title" value="Junior Software Developer" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">แผนก / สังกัด (Department)</label>
+                        <input type="text" id="jd-dept" value="Software Development" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">รายละเอียดงานหลัก (Responsibilities)</label>
+                    <textarea id="jd-resp" rows="3" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">- พัฒนาและดูแลระบบเว็บไซต์ด้วย HTML, CSS, JavaScript และ Python
+- ทำงานร่วมกับทีมเพื่อแก้ไขปัญหาและบั๊กในระบบ</textarea>
+                </div>
+
+                <div class="mt-4">
+                    <label class="block text-sm font-medium text-slate-700 mb-1">เกณฑ์ทักษะบังคับสำหรับคัดกรอง (Mandatory Hard Skills - คั่นด้วยจุลภาค ,)</label>
+                    <input type="text" id="jd-skills" value="JavaScript, Python, HTML" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none bg-amber-50 border-amber-200">
+                    <p class="text-xs text-slate-500 mt-1">⚠️ ระบบคัดกรองอัตโนมัติจะใช้คีย์เวิร์ดเหล่านี้ในการตรวจผู้สมัคร</p>
+                </div>
+
+                <div class="mt-6 flex justify-end">
+                    <button onclick="saveJD()" class="bg-indigo-600 text-white px-6 py-3 rounded-xl font-semibold hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">บันทึกและเปิดรับสมัคร 🚀</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= TAB 2: CANDIDATE SCREENING SECTION ================= -->
+        <section id="tab-candidate" class="hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <div class="mb-6">
+                    <span class="bg-indigo-100 text-indigo-700 text-xs font-bold px-3 py-1 rounded-full">ด่านคัดกรองอัตโนมัติ (Smart AI Screening)</span>
+                    <h2 class="text-2xl font-bold text-slate-900 mt-2" id="display-job-title">สมัครงาน: Junior Software Developer</h2>
+                    <p class="text-sm text-slate-600 mt-1">ระบบจะตรวจสอบทักษะของคุณเทียบกับเกณฑ์ของบริษัททันที เพื่อป้องกันปัญหาทำงานไม่ตรงสายและลดความเสี่ยงการจ้างงานผิดพลาด</p>
+                </div>
+
+                <div class="space-y-4 bg-slate-50 p-6 rounded-xl border border-slate-200">
+                    <h3 class="font-bold text-slate-800">📋 กรอกข้อมูลโปรไฟล์และทักษะของคุณ</h3>
+                    
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">ชื่อ-นามสกุล ผู้สมัคร</label>
+                        <input type="text" id="cand-name" placeholder="เช่น นายสมชาย ตั้งใจเรียน" class="w-full p-3 bg-white border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">สาขาวิชาที่จบการศึกษา (Major)</label>
+                        <input type="text" id="cand-major" placeholder="เช่น วิทยาการคอมพิวเตอร์ / หรือสาขาอื่นๆ" class="w-full p-3 bg-white border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-medium text-slate-700 mb-1">ทักษะที่คุณมี (Hard Skills & Tools ที่ใช้เป็น - คั่นด้วยจุลภาค ,)</label>
+                        <input type="text" id="cand-skills" placeholder="เช่น JavaScript, Python, Photoshop" class="w-full p-3 bg-white border rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none">
+                        <p class="text-xs text-slate-500 mt-1">💡 ลองใส่ทักษะตามที่ JD ต้องการ หรือลองใส่ทักษะมั่วๆ เพื่อดูผลการคัดกรอง</p>
+                    </div>
+
+                    <button onclick="runScreening()" class="w-full bg-emerald-600 text-white p-3 rounded-xl font-semibold hover:bg-emerald-700 transition shadow-lg shadow-emerald-100">ส่งใบสมัครและตรวจสอบคุณสมบัติผ่านระบบ AI 🔍</button>
+                </div>
+
+                <!-- Screening Result Box -->
+                <div id="screening-result" class="hidden mt-6 p-6 rounded-xl border">
+                    <!-- Dynamic Result Inserted Here -->
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        // Tab Switching Logic
+        function switchTab(tab) {
+            if(tab === 'hr') {
+                document.getElementById('tab-hr').classList.remove('hidden');
+                document.getElementById('tab-candidate').classList.add('hidden');
+                document.getElementById('btn-hr').className = 'px-4 py-2 rounded-lg bg-indigo-700 text-sm font-semibold transition';
+                document.getElementById('btn-candidate').className = 'px-4 py-2 rounded-lg bg-indigo-950 text-sm font-semibold transition hover:bg-indigo-600';
+            } else {
+                document.getElementById('tab-hr').classList.add('hidden');
+                document.getElementById('tab-candidate').classList.remove('hidden');
+                document.getElementById('btn-candidate').className = 'px-4 py-2 rounded-lg bg-indigo-700 text-sm font-semibold transition';
+                document.getElementById('btn-hr').className = 'px-4 py-2 rounded-lg bg-indigo-950 text-sm font-semibold transition hover:bg-indigo-600';
+                
+                // Update title on candidate page
+                document.getElementById('display-job-title').innerText = 'สมัครงาน: ' + document.getElementById('jd-title').value;
+            }
+        }
+
+        function generateAIJD() {
+            alert('AI Assistant กำลังวิเคราะห์และร่าง Job Description ให้เรียบร้อย!');
+            document.getElementById('jd-title').value = "Frontend Web Developer";
+            document.getElementById('jd-dept').value = "Digital Product";
+            document.getElementById('jd-skills').value = "React, JavaScript, Tailwind CSS";
+        }
+
+        function saveJD() {
+            alert('บันทึก JD และตั้งค่าเกณฑ์คัดกรองสำเร็จ! สามารถกดสลับไปที่ "ฝั่งผู้สมัคร" เพื่อทดสอบระบบคัดกรองได้เลย');
+            switchTab('candidate');
+        }
+
+        // AI Smart Screening Logic (แก้ปัญหาคนไม่ตรงสาย/โกงสกิล)
+        function runScreening() {
+            const name = document.getElementById('cand-name').value;
+            const major = document.getElementById('cand-major').value;
+            const candSkillsInput = document.getElementById('cand-skills').value;
+            const requiredSkillsInput = document.getElementById('jd-skills').value;
+
+            if(!name || !candSkillsInput) {
+                alert('กรุณากรอกชื่อและทักษะของคุณให้ครบถ้วนก่อนตรวจสอบ');
+                return;
+            }
+
+            // Clean and split skills
+            const requiredSkills = requiredSkillsInput.split(',').map(s => s.trim().toLowerCase());
+            const candSkills = candSkillsInput.split(',').map(s => s.trim().toLowerCase());
+
+            // Check matching
+            let matchedCount = 0;
+            requiredSkills.forEach(req => {
+                if(candSkills.includes(req)) {
+                    matchedCount++;
+                }
+            });
+
+            const matchPercentage = Math.round((matchedCount / requiredSkills.length) * 100);
+            const resultBox = document.getElementById('screening-result');
+            resultBox.classList.remove('hidden');
+
+            // Evaluation logic
+            if(matchPercentage >= 60) {
+                resultBox.className = "mt-6 p-6 rounded-xl border bg-emerald-50 border-emerald-200 text-emerald-900";
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-2xl">🎉</span>
+                        <h4 class="font-bold text-lg">ผ่านการคัดกรองรอบแรก (Screening Passed!)</h4>
+                    </div>
+                    <p class="text-sm mb-3">ยินดีด้วยคุณ <b>${name}</b> มีทักษะตามเกณฑ์ JD ที่กำหนด (${matchPercentage}%) ระบบได้ส่งข้อมูลเรซูเม่ของคุณให้ HR เพื่อติดต่อนัดสัมภาษณ์ต่อไป</p>
+                    <div class="text-xs text-emerald-700 bg-emerald-100 p-3 rounded-lg">
+                        ✓ ป้องกัน Skill Mismatch สำเร็จ: ผู้สมัครมีพื้นฐานสอดคล้องกับตำแหน่งงานจริง
+                    </div>
+                `;
+            } else {
+                resultBox.className = "mt-6 p-6 rounded-xl border bg-rose-50 border-rose-200 text-rose-900";
+                resultBox.innerHTML = `
+                    <div class="flex items-center gap-3 mb-2">
+                        <span class="text-2xl">⚠️</span>
+                        <h4 class="font-bold text-lg">ไม่ผ่านการคัดกรองเบื้องต้น (Not Matched / Skill Mismatch)</h4>
+                    </div>
+                    <p class="text-sm mb-3">ขออภัยคุณ <b>${name}</b> ทักษะหรือพื้นฐานของคุณยังไม่ตรงกับเกณฑ์ขั้นต่ำของตำแหน่งนี้ (${matchPercentage}%) ระบบแนะนำให้ศึกษาเพิ่มเติมเพื่อป้องกันปัญหาทำงานไม่เต็มประสิทธิภาพ</p>
+                    <div class="text-xs text-rose-700 bg-rose-100 p-3 rounded-lg">
+                        🛡️ ระบบช่วยคัดกรองอัตโนมัติ: ป้องกันไม่ให้รับคนไม่ตรงสายเข้ามาทำงาน ซึ่งอาจทำให้เกิดความเครียดและประสิทธิภาพงานลดลง
+                    </div>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>
